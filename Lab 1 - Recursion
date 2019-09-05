@@ -1,0 +1,48 @@
+@author: CarlosCardenas
+"""
+from datetime import datetime
+
+start_time = datetime.now()
+
+lines = [line.rstrip('\n') for line in open('words.txt')] #This will put the text file into a set
+
+word = input("Please enter a word: ") #Ask user for input word
+            
+
+            
+def anagram(word):
+    	
+    if len(word) == 0:
+        return []
+    
+    elif len(word) == 1:
+        return (word)
+    
+    else:
+        perms = []
+        for i in range(len(word)):
+            x = word[i]
+            y = word[:i] + word[i+1:]
+            for p in anagram(y): #recursive call
+                perms.append(x + p)
+        return perms
+    
+    
+
+
+
+match = list(set(lines).intersection(set(anagram(word)))) #This operation will look for matches between the the text file and the output of anagram    
+
+
+match.sort() #This function sorts the output before printing
+
+print("Word:", word)
+
+print("The word", word, "has the following anagrams: ")
+
+for i in match: #Prints the output
+    print(i)
+
+end_time = datetime.now()
+
+print("The program took", (end_time - start_time), "seconds to run")
