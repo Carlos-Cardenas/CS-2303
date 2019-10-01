@@ -1,0 +1,133 @@
+def select_bubble(L,k):
+    for i in range(0,len(L)-1):
+        for j in range(0,len(L)-1-i):
+            if L[j] > L[j+1]:
+                L[j],L[j+1] = L[j+1],L[j]
+    for p in range(len(L)):
+        if p == k:
+            return L[p]
+        
+        
+def select_quick(L,k):
+#    l = []
+#    e = []
+#    g = []
+#    if len(L) > 1:
+#        pivot = L[0]
+#    for i in L:
+#        if i < pivot:
+#            l.append(i)
+#        elif i == pivot:
+#            e.append(i)
+#        elif i > pivot:
+#            g.append(i)
+#    for p in range(len(L)):
+#        if p == k:
+#            return L[p]
+            
+    if len(L) < 2:
+        return L
+    select_quick([i for i in L[1:] if i <= L[0]],k)
+    select_quick([i for i in L[1:] if i > L[0]],k)
+    for p in range(len(L)):
+        if p == k:
+            return L[p]
+    
+def partition(L,l,h): 
+    i = ( l-1 )         # index of smaller element 
+    pivot = L[h]     # pivot 
+  
+    for j in range(l , h): 
+  
+        # If current element is smaller than or 
+        # equal to pivot 
+        if   L[j] <= pivot: 
+          
+            # increment index of smaller element 
+            i = i+1 
+            L[i],L[j] = L[j],L[i] 
+  
+    L[i+1],L[h] = L[h],L[i+1] 
+    return ( i+1 )     
+    
+def select_modified_quick(L,l,h,k):
+    if k < 0 or k >= len(L) or len(L) <= 0:
+        return False
+    if l < h:
+        pivot = partition(L,l,h)
+        if k < pivot:
+            select_modified_quick(L,l,pivot-1,k)
+        select_modified_quick(L,pivot+1,h,k)
+    return L[k]
+    
+
+
+def stack_quick(L,k):
+    h = len(L) - 1
+    l = 0
+    size = (h+1) - l
+    stack = [0] * size
+    top = -1
+    
+    top = top + 1
+    stack[top] = l
+    top = top + 1
+    stack[top] = h
+    
+    while top >= 0:
+        
+        h = stack[top]
+        top = top - 1
+        l = stack[top]
+        top = top -1
+        
+        pivot = partition(L,l,h)
+        
+        if pivot-1 > l:
+            top = top + 1
+            stack[top] = l
+            top = top + 1
+            stack[top] = pivot -1
+            
+        if pivot+1 < h:
+            top = top + 1
+            stack[top] = pivot + 1
+            top = top + 1
+            stack[top] = h
+    
+    return L[k]
+
+
+def while_sort(L,l,h,k):
+        
+    pivot = partition(L,l,h)
+    
+    while pivot != k:
+    
+        if k > pivot:
+            pivot = partition(L,pivot+1,k)
+    
+        pivot = partition(L,pivot-1,k)
+    
+    return L[pivot+2]
+    
+
+    
+    
+    
+    
+L = [5,1,8,3,9,4,2,7] #[1,2,3,4,5,7,8,9] sorted
+
+print("PART 1\n" )
+
+print("Bubble sort\n" , select_bubble(L,0))
+
+print("Quick sort\n" , select_quick(L,1))
+
+print("Modified Quick sort\n" , select_modified_quick(L,0,len(L)-1,2))
+
+print("\nPART 2\n" )
+
+print("Stack Quick sort\n" , stack_quick(L,3))
+
+print("While Quick sort\n" , while_sort(L,0,len(L)-1,4))
