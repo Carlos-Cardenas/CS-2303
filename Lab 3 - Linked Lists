@@ -1,0 +1,193 @@
+import math
+
+class Node(object):
+    # Constructor
+    def __init__(self, data, next=None):  
+        self.data = data
+        self.next = next 
+
+class List(object):   
+    # Constructor
+    def __init__(self): 
+        self.head = None
+        self.tail = None
+        
+def BuildList(pList):
+    L = List()
+    for d in pList:
+        Append(L,d)
+    return L
+
+def Append(L,x):
+    if L.head is None:
+        L.head = Node(x)
+        L.tail = L.head
+    else:
+        L.tail.next = Node(x)
+        L.tail = L.tail.next
+        
+def Insert(self,i):
+    t = self.head
+    if t.data > i:
+        n = Node(i)
+        n.next = t
+        self.head = n
+    while t != None:
+        if t.data < i:
+            if t.next == None:
+                n = Node(i)
+                t.next = n
+            if t.next.data > i:
+                n = Node(i)
+                n.next = t.next
+                t.next = n
+        t = t.next
+        
+def Delete(self,i):
+    t = self.head
+    prev = None;
+    while t is not None:
+        if t.data == i:
+            if prev is None:
+                self.head = t.next
+            if prev is not None:
+                prev.next = t.next
+        prev = t
+        t = t.next         
+        
+def Merge(self,M):
+    t = self.head
+    p = M.head
+    if t == None and p == None:
+        return None
+    if t == None:
+        return p
+    if p == None:
+        return t
+    if t.data > p.data:
+        n = Node(p.data)
+        n.next = t
+        self.head = n
+    while t and p:
+        if t.data < p.data:
+            if t.next == None:
+                n = Node(p.data)
+                t.next = n
+            if t.next.data > p.data:
+                n = Node(p.data)
+                n.next = t.next
+                t.next = n
+        t = t.next
+        p = p.next
+            
+        
+def Print(L):
+    t = L.head
+    while t is not None:
+        print(t.data,end=' ')
+        t = t.next
+    print()
+    
+def IndexOf(self,i):
+    count = 0
+    t = self.head
+    while t != None:
+        if t.data == i:
+            print(count)
+        count += 1
+        t = t.next
+        
+def Clear(self):
+    if self.head != None and self.head.next != None:
+        self.head = None
+        
+def Min(self):
+    t = self.head
+    mini = t.data
+    if t == None:
+        return None
+    while t != None:
+        if t.data < mini:
+            mini = t.data
+        t = t.next
+    return mini
+
+def Max(self):
+    t = self.head
+    maxi = t.data
+    if t == None:
+        return None
+    while t != None:
+        if t.data > maxi:
+            maxi = t.data
+        t = t.next
+    return maxi
+
+def HasDuplicates(self):
+    t = self.head
+    if t == None:
+        return
+    while t.next != None:
+        if t.data == t.next.data:
+            return True
+        t = t.next
+    return False
+    
+def Select(self,k):
+    count = 0
+    t = self.head
+    if t == None:
+        return None
+    while t != None:
+        if t.data == k:
+            return count
+        count += 1
+        t = t.next
+    return -math.inf
+        
+        
+
+        
+L = BuildList((1,2,4,5,6,7,8,10))
+M = BuildList((0,3,7,12))
+
+print("Print:")
+Print(L)
+
+print("Insert:")
+Insert(L,0)
+Insert(L,3)
+Insert(L,9)
+Insert(L,11)
+Print(L)
+
+print("Delete:")
+Delete(L,7)
+Print(L)
+
+print("Merge:")
+Merge(L,M)
+Print(L)
+
+print("Index:")
+IndexOf(L,5)
+
+print("Clear:")
+Clear(L)
+Print(L)
+
+print("Print:")
+L = BuildList((1,2,4,5,6,7,8,10))
+Print(L)
+
+print("Min:")
+print(Min(M))
+
+print("Max:")
+print(Max(M))
+
+print("Duplicates:")
+print(HasDuplicates(L))
+
+print("Select:")
+print(Select(L,3))
