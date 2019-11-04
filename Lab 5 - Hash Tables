@@ -1,0 +1,265 @@
+
+import numpy as np
+from datetime import datetime
+start_time = datetime.now()
+import math
+
+class HashTable(object):
+    def __init__(self, size,num_items = 0):
+        self.item = list(np.zeros(size,dtype=np.int)-1)
+        self.num_items = num_items
+
+class Slot(object):
+    def __init__(self, word=" ", embedding=np.array(50)):
+        self.word = word
+        self.embedding = embedding
+
+def loadFactor(H):
+    return float(H.num_items / len(H.item))
+
+def longestChain(H):
+    neg_ones=np.argwhere(H.item == -1)
+    if len(neg_ones)==0:
+        return len(H.item)
+    neg_ones=np.append(neg_ones, neg_ones[0]+len(H.item))
+    print('Negative ones:',neg_ones)
+    chain_lens = neg_ones[1:]-neg_ones[:-1]-1
+    print('Chain lengths:',chain_lens)
+    return np.max(chain_lens)
+
+def readFile(file):
+    words_embeddings = []
+    with open(file, 'r') as f:
+        for line in f:
+            line = line.strip('\n')
+            line = line.split(' ')
+            if line[0].isalpha():
+                S = Slot(line[0])
+                S.embedding = np.array(list(map(float, line[1:])))
+                words_embeddings.append(S)
+    return words_embeddings
+
+def resizeHashTable(H, newH, option):
+    L = list(H.item)
+    while (-1) in L:
+        L.remove(-1)
+    for i in range(len(L)):
+        Insert_By_Positions(newH, L[i], option)
+    H = newH
+    
+    
+def Insert_By_Positions(H, S, option):
+    for i in range(len(H.item)):
+        if option == 1:
+            pos = (len(S.word) + i) % len(H.item)
+            
+        if option == 2:
+            pos = (ord(S.word[0]) + i) % len(H.item)
+            
+        if option == 3:
+            product = (ord(S.word[0]) * ord(S.word[-1]))
+            pos = (product + i) % len(H.item)
+        
+        if option == 4:
+            sumascii = 0
+            for letter in S.word:
+                sumascii += ord(letter)
+            pos = (sumascii + i) % len(H.item)
+            
+        if option == 5:
+            pos = (ord(S.word[-1]) + i) % len(H.item)
+        
+        if option == 6:
+            pos = (ord(S.word[-1]) + i) % len(H.item)
+        
+        if H.item[pos] == -1:
+            H.item[pos] = S
+            H.num_items += 1
+            return pos
+        
+    return -1
+
+    
+def checkHashTableSize(file, option):
+    H = HashTable(200)
+    for i in range(len(file)):
+        Insert_By_Positions(H, file[i], option)
+        if H.num_items >= int(len(H.item) * 0.5):
+            newHashTable = HashTable((2 * len(H.item)) + 1)
+            resizeHashTable(H, newHashTable, 1)
+            H = resizeHashTable
+    return H
+
+
+def tableSize(H):
+    num_items = 0
+    for i in range(len(H.item)):
+        if H.item[i] != -1:
+            num_items += 1
+    return num_items
+
+
+def HashTableInfo(H):
+    print('\nHash Table Stats:')
+    print('Table size:', tableSize(H))
+    print('Load Factor:', round(loadFactor(H), 6))
+    print('Longest Chain:', longestChain(H))
+    return
+    
+     
+def print_HashTable_Values(H):
+    for i in range(len(H.item)):
+        if H.item[i] != -1:
+            print(H.item[i].word) 
+            print(H.item[i].embedding)  
+    return
+            
+def menu():
+    print("\n------------------------MENU-------------------------")
+    print("\n1. The length of the string % n")
+    print("2. The ascii value (ord(c)) of the first character in the string % n")
+    print("3. The product of the ascii values of the first and last characters in the string % n")
+    print("4. The sum of the ascii values of the characters in the string % n")
+    print("5. The recursive formulation h(”,n) = 1; h(S,n) = (ord(s[0]) + 255*h(s[1:],n))% n")
+    print("6. The ascii value (ord(c)) of the last character in the string % n")
+    print("7. Exit")
+    print("\n------------------------------------------------------")
+    return 
+
+
+
+def find_By_Position(H, word, option):
+    for i in range(len(H.item)):
+        if option == 1:
+            pos = (len(word) + i) % len(H.item)
+            
+        if option == 2:
+            pos = (ord(word[0]) + i) % len(H.item)
+            
+        if option == 3:
+            product = (ord(word[0]) * ord(word[-1]))
+            pos = (product + i) % len(H.item)
+        
+        if option == 4:
+            sumascii = 0
+            for letter in word:
+                sumascii += ord(letter)
+            pos = (sumascii + i) % len(H.item)
+            
+        if option == 5:
+            pos = (ord(word[-1]) + i) % len(H.item)
+        
+        if option == 6:
+            pos = (ord(word[-1]) + i) % len(H.item)
+            
+        if H.item[pos] != -1:
+            if H.item[pos].word == word:
+                return H.item[pos].embedding
+    return 
+
+
+
+def word_Similarities(H, word, option):
+    magnitude1,magnitude2 = 0, 0
+    dot1, dot2, sim = 0, 0, 0
+    with open('similar2.txt', 'r') as sims:
+        for line in sims:
+            line = line.strip('\n')
+            line = line.split(' ')
+            firstWord = line[0]
+            secondWord = line[1]
+            #print(firstWord)
+            word1 = find_By_Position(H, firstWord, option)
+            word2 = find_By_Position(H, secondWord, option)
+            for num in word1:
+                magnitude1 += num*num
+            magnitude1 = math.sqrt(magnitude1)
+            for num2 in word2:
+                magnitude2 += num2*num2
+            magnitude2 = math.sqrt(magnitude2)
+            for i in word1:
+                for j in word2:
+                    dot1 = i*j
+                    dot2 += dot1
+            sim = dot2/abs(magnitude1*magnitude2)
+            print("Similarity:", [firstWord, secondWord], '=', "{:.4f}".format(abs(sim)))
+            
+            
+            
+            
+
+if __name__ == "__main__":
+    file = readFile("words_embeddings.txt")
+    menu()
+    option = 0
+    while option < 7:
+        option = int(input("Choose hash function 1 to 6: "))
+        if option > 6:
+            print("BYE!")
+        if option > 0 and option < 7:
+            if option == 1:
+                H = checkHashTableSize(file, option)
+                HashTableInfo(H)
+                end_time = datetime.now()
+                total_time = end_time - start_time
+                print("Running time for table construction:", total_time)
+                print("\nReading word file to determine similarities")
+                print("\nWord similarities found:")
+                word_Similarities(H,'',option)
+                print("Running time for query processing:", total_time)
+                
+            if option == 2:
+                H = checkHashTableSize(file,option)
+                HashTableInfo(H)
+                end_time = datetime.now()
+                total_time = end_time - start_time
+                print("Running time for table construction:", total_time)
+                print("\nReading word file to determine similarities")
+                print("\nWord similarities found:")
+                word_Similarities(H,'',option)
+                print("Running time for query processing:", total_time)
+                
+            if option == 3:
+                H = checkHashTableSize(file,option)
+                HashTableInfo(H)
+                end_time = datetime.now()
+                total_time = end_time - start_time
+                print("Running time for table construction:", total_time)
+                print("\nReading word file to determine similarities")
+                print("\nWord similarities found:")
+                word_Similarities(H,'',option)
+                print("Running time for query processing:", total_time)
+                
+            if option == 4:
+                H = checkHashTableSize(file,option)
+                HashTableInfo(H)
+                end_time = datetime.now()
+                total_time = end_time - start_time
+                print("Running time for table construction:", total_time)
+                print("\nReading word file to determine similarities")
+                print("\nWord similarities found:")
+                word_Similarities(H,'',option)
+                print("Running time for query processing:", total_time)
+                
+            if option == 5:
+                H = checkHashTableSize(file,option)
+                HashTableInfo(H)
+                end_time = datetime.now()
+                total_time = end_time - start_time
+                print("Running time for table construction:", total_time)
+                print("\nReading word file to determine similarities")
+                print("\nWord similarities found:")
+                word_Similarities(H,'',option)
+                print("Running time for query processing:", total_time)
+                
+            if option == 6:
+                H = checkHashTableSize(file,option)
+                HashTableInfo(H)
+                end_time = datetime.now()
+                total_time = end_time - start_time
+                print("Running time for table construction:", total_time)
+                print("\nReading word file to determine similarities")
+                print("\nWord similarities found:")
+                word_Similarities(H,'',option)
+                print("Running time for query processing:", total_time)
+            
