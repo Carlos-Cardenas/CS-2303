@@ -6,7 +6,6 @@ Created on Mon Nov 11 19:03:12 2019
 @author: CarlosCardenas
 """
 
-# Edge list representation of graphs
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
