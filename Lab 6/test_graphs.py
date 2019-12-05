@@ -8,8 +8,8 @@ Created on Mon Nov 11 19:03:12 2019
 
 import matplotlib.pyplot as plt
 import graph_AL as AL_test
-import graph_AM as AM_test # Replace line 3 by this one to demonstrate adjacy maxtrix implementation
-import graph_EL as EL_test # Replace line 3 by this one to demonstrate edge list implementation
+import graph_AM as AM_test 
+import graph_EL as EL_test 
 
 def tests(choice):  
     
