@@ -118,15 +118,13 @@ def Vowel_edit_distance(s1,s2):
                 d[i,j] =d[i-1,j-1]    
                 
             else:
+                n = [d[i,j-1],d[i-1,j-1],d[i-1,j]] 
+                if min(n) == d[i-1,j-1]: 
+                    if (not s1[i-1] in vowels and s2[j-1] in vowels) or (s1[i-1] in vowels and not s2[j-1] in vowels):
+                        n = [d[i,j-1],d[i-1,j]]
+                d[i,j] = min(n)+1 
                 
-                if(s1[i-1] in vowels and s2[j-1] in vowels) or (s1[i-1] not in vowels and s2[j-1] not in vowels): 
-                    n = [d[i,j-1],d[i-1,j-1],d[i-1,j]]
-                    d[i,j] = min(n)+1  
-                
-                else: 
-                     n = [d[i,j-1],d[i-1,j-1],d[i-1,j]]
-                     d[i,j] = min(n)+1  
-    return d[-1,-1]
+    return d[-1,-1] 
     
 
 
