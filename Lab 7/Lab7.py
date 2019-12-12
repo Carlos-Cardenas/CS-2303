@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Fri Dec 6 10:52:40 2019
@@ -119,6 +120,7 @@ def Vowel_edit_distance(s1,s2):
                 
             else:
                 n = [d[i,j-1],d[i-1,j-1],d[i-1,j]] 
+                
                 if min(n) == d[i-1,j-1]: 
                     if (not s1[i-1] in vowels and s2[j-1] in vowels) or (s1[i-1] in vowels and not s2[j-1] in vowels):
                         n = [d[i,j-1],d[i-1,j]]
@@ -174,6 +176,6 @@ print("Graph 2", test_BT(g2))
 print()
 
 print("Original Edit Distance:")
-print(edit_distance("sand","sound"))
+print(edit_distance("hello","hail"))
 print("Modified Edit Distance:")
-print(Vowel_edit_distance("sand","sound"))
+print(Vowel_edit_distance("hello","hail"))
